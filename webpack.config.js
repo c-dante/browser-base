@@ -3,7 +3,7 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 module.exports = {
     context: process.cwd() + '/src/',
     entry: {
-        main: './main.jsx'
+        main: './main.es6.js'
     },
     devtool: 'cheap-source-map',
     output: {
@@ -16,7 +16,7 @@ module.exports = {
     },
     module: {
         loaders: [
-            { test: /\.jsx$/, loader: 'babel', exclude: '/(node_modules|bower_components)/' },
+            { test: /\.es6\.js$/, loader: 'babel', exclude: '/(node_modules|bower_components)/' },
             { test: /\.jade$/, loader: 'jade', exclude: '/(node_modules|bower_components)/' },
             { test: /\.less$/, loader: ExtractTextPlugin.extract('style', 'css!autoprefixer!less'), exclude: '/(node_modules|bower_components)/' }
         ]
