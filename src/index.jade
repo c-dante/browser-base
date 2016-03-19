@@ -1,11 +1,23 @@
 doctype html
-html(lang="en")
+html(lang='en')
 	head
-		meta(charset="UTF-8")
-		meta(name="viewport", content="width=device-width, initial-scale=1")
-		meta(name="description", content="")
-
-		title Hello World
-
-		script(src="./main.bundle.js", type="text/javascript", async, defer)
+		meta(charset='UTF-8')
+		title Demo Page
+		link(
+			rel="stylesheet"
+			type="text/css"
+			href="./index.css"
+		)
+		link(
+			rel="shortcut icon"
+			type="image/x-icon"
+			href="./favicon.ico"
+		)
 	body
+		h1.hidden.content-loading Loading...
+
+		script(
+			src="app.bundle.js",
+			async="true",
+			defer="true"
+		)
