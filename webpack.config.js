@@ -1,27 +1,46 @@
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
+'use strict'
+
+var autoprefixer = require('autoprefixer');
+var path = require('path');
 
 module.exports = {
-    context: process.cwd() + '/src/',
-    entry: {
-        main: './main.es6.js'
-    },
-    devtool: 'cheap-source-map',
-    output: {
-        path: process.cwd() + '/www/bin/',
-        filename: '[name].bundle.js',
-        chunkFilename: '[id].js'
-    },
-    resolveLoader: {
-        root: process.cwd() + '/node_modules/'
-    },
-    module: {
-        loaders: [
-            { test: /\.es6\.js$/, loader: 'babel', exclude: '/(node_modules|bower_components)/' },
-            { test: /\.jade$/, loader: 'jade', exclude: '/(node_modules|bower_components)/' },
-            { test: /\.less$/, loader: ExtractTextPlugin.extract('style', 'css!autoprefixer!less'), exclude: '/(node_modules|bower_components)/' }
-        ]
-    },
-    plugins: [
-        new ExtractTextPlugin('[name].css', { allChunks: true })
-    ]
+	context: path.resolve(process.cwd(), 'src'),
+	entry: {
+		main: './main.js',
+		index: './index.jade'
+	},
+	output: {
+		path: path.resolve(process.cwd(), 'bin'),
+		filename: '[name].bundle.js',
+		chunkFilename: '[id].js'
+	},
+	debug: true,
+	devtool: 'cheap-source-map',
+	resolveLoader: {
+		root: process.cwd() + '/node_modules/'
+	},
+	module: {
+		loaders: [
+			{ test: /\.js$/, loader: 'babel', exclude: '/(node_modules|bower_components)/' },
+			{ test: /\.tpl\.jade$/, loaders: ['html?removeRedundantAttributes=false', 'jade-html'], exclude: '/(node_modules|bower_components)/' },
+			{ test: /[^\.][^t][^p][^l]\.jade$/, loaders: ['file?name=[name].html', 'jade-html'], exclude: '/(node_modules|bower_components)/' },
+			{ test: /\.less$/, loaders: ['style', 'css', 'postcss', 'less'], exclude: '/(node_modules|bower_components)/' }
+		]
+	},
+	postcss: () => {
+		return [autoprefixer];
+	},
+	devServer: {
+		publicPath: '/',
+		outputPath: '/',
+		filename: 'app.bundle.js',
+		watchOptions: undefined,
+		watchDelay: undefined,
+		contentBase: path.resolve(process.cwd(), 'src'),
+		stats: {
+			cached: false,
+			cachedAssets: false,
+			colors: true
+		}
+	}
 };
