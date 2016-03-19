@@ -1,10 +1,10 @@
 # browser-base
 A boilerplate to start developing for the web
 
-`npm serve` for testing
+`npm run serve` for developing
 
-`npm compile` to build
+`npm run compile` to build to `./bin`
 
-`npm test` for cli testing
+`npm run lint` to lint code
 
-`npm test-web` to debug in the browser
+`npm test` host tests at `localhost:8080/test.bundle`

@@ -6,8 +6,8 @@
   "scripts": {
     "compile": "rm -rf ./bin && ./node_modules/webpack/bin/webpack.js",
     "serve": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js --hot --inline --progress",
-    "test": "./node_modules/eslint/bin/eslint.js src/ test/ && ./node_modules/mocha/bin/mocha --compilers js:babel-register test/**/*.spec.js",
-    "test-web": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js \"mocha!../test/allTests.js\" --target web --output-file test.bundle.js"
+    "lint": "./node_modules/eslint/bin/eslint.js src/ test/ ",
+    "test-web": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js --target web --output-filename test.bundle.js  --entry \"mocha!../test/allTests.js\""
   },
   "author": "c-dante",
   "license": "MIT",
@@ -31,6 +31,8 @@
     "jade-loader": "^0.8.0",
     "less": "^2.5.3",
     "less-loader": "^2.2.2",
+    "mocha": "^2.4.5",
+    "mocha-loader": "^0.7.1",
     "postcss-loader": "^0.8.2",
     "style-loader": "^0.13.0",
     "webpack": "^1.12.11",
