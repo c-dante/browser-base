@@ -6,7 +6,7 @@ var path = require('path');
 module.exports = {
 	context: path.resolve(process.cwd(), 'src'),
 	entry: {
-		main: ['./main.js', './index.jade']
+		main: ['./index.jade', './main.js']
 	},
 	output: {
 		path: path.resolve(process.cwd(), 'bin'),
