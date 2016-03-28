@@ -4,10 +4,10 @@
   "repository": "c-dante/browser-base",
   "main": "index.js",
   "scripts": {
-    "compile": "rm -rf ./bin && ./node_modules/webpack/bin/webpack.js",
-    "serve": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js --hot --inline --progress",
-    "lint": "./node_modules/eslint/bin/eslint.js src/ test/ ",
-    "test-web": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js --target web --output-filename test.bundle.js  --entry \"mocha!../test/allTests.js\""
+    "compiler": "rm -rf ./bin && ./node_modules/webpack/bin/webpack.js",
+    "server": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js --hot --inline --progress",
+    "linter": "./node_modules/eslint/bin/eslint.js src/ test/ ",
+    "test": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js --target web --output-filename test.bundle.js  --entry \"mocha!../test/allTests.js\""
   },
   "author": "c-dante",
   "license": "MIT",
