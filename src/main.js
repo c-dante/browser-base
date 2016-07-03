@@ -1,1 +1,4 @@
-require('./main.less');
+import './main.less';
+
+console.log('Main loaded');
+

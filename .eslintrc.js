@@ -7,10 +7,11 @@ module.exports = {
 		// 'no-undef': [1, 'always'],
 		'padded-blocks': [1, 'always'],
 		indent: [1, 'tab'],
-		'prefer-const': [1]
+		'prefer-const': [1],
 	},
 	env: {
 		browser: true,
-		mocha: true
-	}
+		mocha: true,
+	},
 };
+

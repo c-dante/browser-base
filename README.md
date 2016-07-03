@@ -1,27 +1,41 @@
-# browser-base
-A boilerplate to start developing for the web
+# web-base
+Use this to start other web projects. It gives you a good base to start from including
++ has an .editorconfig to enforce typographic style like tabs instead of spaces and no trailing whitespace
++ uses eslint to enforce javascript coding conventions such as no `var`s perfer arrow functions, etc
++ compiles es6 using babel and webpack (includes sourcemaps)
++ compiles jade -> html or strings (.tpl)
++ compiles less -> css adding browser specific prefixes where necessary
 
-`npm run server` for developing
+## New projects
+First create a new repository on [github](https://github.com/new)
+```
+git clone git@github.com:jplikesbikes/web-base.git newrepos
+cd newrepos
+git remote rename origin upstream
+git remote add origin git@github.com:jplikesbikes/newrepos
+git push -u origin master
+```
+Update the package.json name and repository.
+Update the readme.
+Your good to go!
 
-`npm run compiler` to build to `./bin`
+## Develop
+```
+npm install
+npm test // run tests
+npm run linter // lint and auto fix formatting errors
+npm run web-test //  run tests in browser with webpack-dev-server
+open localhost:8080/test.bundle
+npm run server // run webpack-dev-server with hot module reloading
+open localhost:8080
+```
 
-`npm run linter` to lint code
+Watching Tests
+```
+npm test -- --watch
+```
 
-`npm test` host tests at `localhost:8080/test.bundle`
-
-# best practise
-Instead of cloning or forking this repo, simply make a new repo and add this repo as a remote resource.
-
-Feel free to replace `build` with whatever remote name you like.
-```sh
-# Setup (do once, only persists in your local folder):
-# navigate to project that wants to use browser-base
-$> cd ./my-git-project
-# Add a remote repo ("build" can be any name -- even "upstream")
-$> git remote add build git@github.com:c-dante/browser-base.git
-
-# To update build:
-$> git checkout master
-$> git fetch build
-$> git merge build/master
+Compile into `bin`
+```
+npm run compiler
 ```
