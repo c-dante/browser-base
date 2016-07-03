@@ -9,8 +9,10 @@
     "test": "./node_modules/mocha/bin/mocha --compilers js:babel-register src/**/*.spec.js",
     "web-test": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js \"mocha!../test/allTests.js\" --target web --output-file test.bundle.js --hot --inline --progress"
   },
-  "ghooks": {
-    "pre-commit": "linter"
+  "config": {
+    "ghooks": {
+      "pre-commit": "npm run linter"
+    }
   },
   "dependencies": {},
   "devDependencies": {
