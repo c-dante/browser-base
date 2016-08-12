@@ -5,15 +5,20 @@ bin
 node_modules
 
 # IDE
-.tmp
+.tmp/
 .DS_Store
-.idea
+.idea/
 *.sublime-*
 .tern-project
 
 # Generated / Data files
 *.meta
 *.log
+*.datavore
+
+
+# Misc
+data/
 
 # Optional REPL history
 .node_repl_history

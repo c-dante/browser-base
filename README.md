@@ -4,7 +4,7 @@ Use this to start other web projects. It gives you a good base to start from inc
 + uses eslint to enforce javascript coding conventions such as no `var`s perfer arrow functions, etc
 + compiles es6 using babel and webpack (includes sourcemaps)
 + compiles jade -> html or strings (.tpl)
-+ compiles less -> css adding browser specific prefixes where necessary
++ compiles sass -> css adding browser specific prefixes where necessary
 
 ## New projects
 First create a new repository on [github](https://github.com/new)
@@ -24,8 +24,10 @@ Your good to go!
 npm install
 npm test // run tests
 npm run linter // lint and auto fix formatting errors
+
 npm run web-test //  run tests in browser with webpack-dev-server
 open localhost:8080/test.bundle
+
 npm run server // run webpack-dev-server with hot module reloading
 open localhost:8080
 ```
@@ -35,7 +37,9 @@ Watching Tests
 npm test -- --watch
 ```
 
-Compile into `bin`
+Compile into `bin` and deploy to s3
 ```
 npm run compiler
+npm run aws-deploy s3://your-bucket-here
 ```
+note you need the aws cli installed for deployment to work
