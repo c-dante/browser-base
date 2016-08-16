@@ -3,8 +3,11 @@ html(lang='en')
 	head
 		meta(charset='UTF-8')
 		title Demo Page
-	body
+	body(data-ng-app="life-events")
 		h1.content-loading Loading...
+
+		event-form
+
 		script(
 			src="app.bundle.js",
 			async="true",

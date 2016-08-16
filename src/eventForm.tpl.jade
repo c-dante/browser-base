@@ -1,0 +1,10 @@
+h1 Hey, you.
+
+form
+	fieldset
+		label
+			Named shapes
+			select(ng-if="$ctrl.shapes.length")
+				option(ng-repeat="shape in $ctrl.shapes")
+		label
+
