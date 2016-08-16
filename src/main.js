@@ -18,13 +18,10 @@ const app = angular.module('life-events', [ngRedux])
 		$ngReduxProvider.createStoreWith(
 			rootReducer,
 			[
-				ReduxThunk
+				ReduxThunk,
 			]
 		);
 	}]);
-
-
-
 
 
 class EventFormComponent {
@@ -37,6 +34,6 @@ class EventFormComponent {
 import eventFormTpl from './eventForm.tpl.jade';
 app.component('eventForm', {
 	template: eventFormTpl,
-	controller: ['$ngRedux', EventFormComponent]
+	controller: ['$ngRedux', EventFormComponent],
 });
 
