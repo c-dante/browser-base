@@ -3,10 +3,13 @@ html(lang='en')
 	head
 		meta(charset='UTF-8')
 		title Demo Page
-	body(data-ng-app="life-events")
-		h1.content-loading Loading...
-
-		event-form
+		link(
+			rel="stylesheet"
+			type="text/css"
+			href="./index.css"
+		)
+	body
+		h1.hidden.content-loading Loading...
 
 		script(
 			src="app.bundle.js",
