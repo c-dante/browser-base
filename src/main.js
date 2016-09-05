@@ -1,7 +1,8 @@
 import './main.scss';
 
 // Build the router
-import { Router5 } from 'router5';
+import { createRouter } from 'router5';
+import browserPlugin from 'router5/plugins/browser';
 
 const route = (name, path, opts = {}) => ({ path, name, ...opts });
 
@@ -10,10 +11,12 @@ const routes = [
 	route('root', '/'),
 ];
 
-const router = new Router5(routes, {
-	useHash: true,
+const router = createRouter(routes, {
 	defaultRoute: 'root',
-});
+}).usePlugin(browserPlugin({
+	useHash: true,
+	hashPrefix: '!',
+}));
 
 // Build state from some defaults
 import { makeState, defaultMiddleware } from './util/state';
