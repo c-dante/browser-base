@@ -1,7 +1,8 @@
 'use strict';
 module.exports = {
 	settings: {
-		'import/resolver': 'webpack'
+		'import/resolver': 'webpack',
+		'import/extensions': [ '.js' ],
 	},
 	extends: [
 		'airbnb/base',
