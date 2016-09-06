@@ -1,13 +1,18 @@
+import env from 'environment';
+
 import { createStore, applyMiddleware } from 'redux';
 import createLogger from 'redux-logger';
 import thunk from 'redux-thunk';
 
 export const defaultMiddleware = [
-	createLogger({
-		collapsed: true,
-	}),
 	thunk,
 ];
+
+if (env.logging) {
+	defaultMiddleware.push(createLogger({
+		collapsed: true,
+	}));
+}
 
 export const makeState = (
 	reducer,

@@ -1,4 +1,7 @@
+import env from 'environment';
 import './main.scss';
+
+console.debug(env);
 
 // Build the router
 import { createRouter } from 'router5';
