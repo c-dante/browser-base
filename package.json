@@ -1,6 +1,6 @@
 {
   "name": "browser-base",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "repository": "c-dante/browser-base",
   "scripts": {
     "compiler": "rm -rf ./bin && ./node_modules/webpack/bin/webpack.js",
