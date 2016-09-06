@@ -32,6 +32,16 @@ npm run server // run webpack-dev-server with hot module reloading
 open localhost:8080
 ```
 
+### Environments
+The `webpack.config.js` adds an `environment` module alias to a file in the `env` directory.
+By default, it points to `env/localhost.js`, but you can point to any file in
+`env` by
+providing a `--env environmentName` command line arg:
+```
+#Compile with import env from `environment` pointing to `env/prod.js`
+npm run compiler -- --env prod
+```
+
 Watching Tests
 ```
 npm test -- --watch
