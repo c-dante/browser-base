@@ -3,7 +3,18 @@ var webpack = require('webpack');
 var autoprefixer = require('autoprefixer');
 var path = require('path');
 
+
+// Gen env arg
+const buildEnv = process.argv.filter(
+	(arg, i, col) => i > 0 && col[i - 1] === '--env'
+)[0] || 'localhost';
+
 module.exports = {
+	resolve: {
+		alias: {
+			environment: path.resolve(process.cwd(), 'env', buildEnv)
+		}
+	},
 	module:	{
 		loaders: [
 			{ test: /\.js$/, exclude: /node_modules/, loaders: ['babel'] },

@@ -1,6 +1,13 @@
 'use strict';
 module.exports = {
-	extends: 'airbnb/base',
+	settings: {
+		'import/resolver': 'webpack'
+	},
+	extends: [
+		'airbnb/base',
+		'plugin:import/errors',
+		'plugin:import/warnings',
+	],
 	root: true,
 	parserOptions: {
 		ecmaVersion: 6,
