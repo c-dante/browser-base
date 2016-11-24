@@ -44,7 +44,6 @@ module.exports = {
 	],
 	entry: {
 		app: [
-			'./favicon.ico',
 			'./index.scss',
 			'./index.jade',
 			'./main.js',
