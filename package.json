@@ -3,7 +3,7 @@
   "version": "0.3.0",
   "repository": "c-dante/browser-base",
   "scripts": {
-    "compiler": "rm -rf ./bin && ./node_modules/webpack/bin/webpack.js && node mergeAssets",
+    "compiler": "node ./build",
     "aws-deploy": "aws s3 sync --acl public-read --delete ./bin",
     "linter": "./node_modules/eslint/bin/eslint.js --fix src/ test/",
     "server": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js --hot --inline --progress",
@@ -27,6 +27,7 @@
     "babel-register": "^6.7.2",
     "chai": "^3.5.0",
     "css-loader": "^0.23.1",
+    "cssnano": "^3.8.1",
     "eslint": "^2.4.0",
     "eslint-config-airbnb": "^9.0.1",
     "eslint-import-resolver-webpack": "^0.5.1",

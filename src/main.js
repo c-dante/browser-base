@@ -1,5 +1,7 @@
 import env from 'environment';
 import './main.scss';
 
-console.debug('Hello world', env);
+if (env.logging) {
+	console.debug('Hello world', env);
+}
 

@@ -1,13 +1,39 @@
 'use strict';
 var webpack = require('webpack');
 var autoprefixer = require('autoprefixer');
+var cssnano = require('cssnano');
 var path = require('path');
 
+
+const wpPlugins = [];
 
 // Gen env arg
 const buildEnv = process.argv.filter(
 	(arg, i, col) => i > 0 && col[i - 1] === '--env'
 )[0] || 'localhost';
+
+console.log('BUILD ENV: ', buildEnv);
+
+if (buildEnv === 'prod') {
+	wpPlugins.push(
+			new webpack.optimize.UglifyJsPlugin({
+		sourceMap: false
+		}),
+		new webpack.optimize.DedupePlugin(),
+		new webpack.DefinePlugin({
+			'process.env.NODE_ENV': '"production"'
+		})
+	);
+} else {
+	wpPlugins.push(new webpack.SourceMapDevToolPlugin({
+		// exclude the index entry point
+		exclude: /.*index.*$/,
+		columns: false,
+		filename: '[file].map[query]',
+		lineToLine: false,
+		module: false
+	}));
+}
 
 module.exports = {
 	resolve: {
@@ -30,18 +56,9 @@ module.exports = {
 		]
 	},
 	postcss: function(){
-		return [autoprefixer]
+		return [autoprefixer,cssnano]
 	},
-	plugins: [
-		new webpack.SourceMapDevToolPlugin({
-			// exclude the index entry point
-			exclude: /.*index.*$/,
-			columns: false,
-			filename: '[file].map[query]',
-			lineToLine: false,
-			module: false
-		})
-	],
+	plugins: wpPlugins,
 	entry: {
 		app: [
 			'./index.scss',
