@@ -1,5 +1,8 @@
+[Ughhh hooks]
+package.json
+
 [Build Files]
-www/bin
+bin
 
 [Generated Files]
 *.log
