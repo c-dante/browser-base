@@ -16,7 +16,14 @@
     }
   },
   "dependencies": {
-    "normalize.css": "^4.2.0"
+    "inferno": "^1.0.0-beta24",
+    "inferno-component": "^0.7.27",
+    "inferno-create-element": "^1.0.0-beta24",
+    "inferno-hyperscript": "^1.0.0-beta24",
+    "normalize.css": "^4.2.0",
+    "ramda": "^0.22.1",
+    "redux": "^3.6.0",
+    "redux-logger": "^2.7.4"
   },
   "devDependencies": {
     "autoprefixer": "^6.3.3",
