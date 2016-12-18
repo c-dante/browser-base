@@ -9,13 +9,10 @@ node_modules
 .DS_Store
 .idea/
 *.sublime-*
-.tern-project
 
 # Generated / Data files
 *.meta
 *.log
-*.datavore
-
 
 # Misc
 data/
