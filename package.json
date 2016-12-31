@@ -1,6 +1,6 @@
 {
   "name": "browser-base",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "repository": "c-dante/browser-base",
   "scripts": {
     "compiler": "node ./build",
