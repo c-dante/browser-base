@@ -35,7 +35,7 @@ const parseAttrs = (attrs, props) => {
 	const {
 		classes,
 		events,
-		rest,
+		rest
 	} = R.reduce(
 		(acc, x) => {
 			const token = x.name.toLowerCase();
@@ -46,23 +46,23 @@ const parseAttrs = (attrs, props) => {
 			} else {
 				acc.rest.push(x);
 			}
-
+			
 			return acc;
 		},
 		{ events: [], classes: [], rest: [] },
 		attrs
 	);
-
+	
 	if (classes.length) {
 		staticAttrs.push('class', classes.map(x => x.val.slice(1, -1)).join(' '));
 	}
-
+	
 	if (events.length) {
 		events.forEach(
 			x => dynamicAttrs.push(x.name, R.path(x.val.split('.'), props))
 		);
 	}
-
+	
 	if (rest.length) {
 		rest.forEach(
 			x => staticAttrs.push(x.name, x.val)
@@ -71,51 +71,57 @@ const parseAttrs = (attrs, props) => {
 
 	return {
 		dynamicAttrs,
-		staticAttrs,
+		staticAttrs
 	};
-};
+}
 
-const isVoidElt = (node) =>
+const isVoidElt = (node) => 
 	node.selfClosing ||
 	(
 		node.type === PugNodeType.Tag &&
 		[
-			'input',
+			'input'
 		].includes(node.name.toLowerCase())
 	);
 
 // @todo: we can push these calls into a list
 // @todo: and we can develop smart inc-dom...
-const render = ({ ast, props }) =>
+const compile = (ast) => {
+	const commands = [];
+	// @todo: pivitol parts of state model changing / extraction
+	
 	// @todo: this can be so optimized.
 	// @todo: static parts of the tree can stay fine
 	// @todo: determine where my code goes to generate a sexy idom loop
-	(function recurse(node, parent) {
+	(function recurse(node, parent){
 		switch (node.type) {
 			case PugNodeType.Block:
 				node.nodes.forEach(x => recurse(x, node));
 				break;
 
 			case PugNodeType.Tag: {
-
-				const { staticAttrs, dynamicAttrs } = parseAttrs(node.attrs, props);
-				const args = [node.name, undefined, staticAttrs, dynamicAttrs];
-
-				if (isVoidElt(node)) {
-					elementVoid.apply(undefined, args);
-					break;
-				}
-
-				elementOpen.apply(undefined, args);
+				commands.push((props) => {
+					const { staticAttrs, dynamicAttrs } = parseAttrs(node.attrs, props);
+					const args = [node.name, undefined, staticAttrs, dynamicAttrs];
+					if (isVoidElt(node)) {
+						elementVoid.apply(undefined, args);
+					} else {
+						elementOpen.apply(undefined, args);
+					}
+				});
+				
 				if (node.block) {
 					node.block.nodes.forEach(x => recurse(x, node));
 				}
-				elementClose(node.name);
+				
+				if (!isVoidElt(node)) {
+					commands.push(() => elementClose(node.name));
+				}
 			}
-				break;
-
+			break;
+			
 			case PugNodeType.Text:
-				text(node.val);
+				commands.push(() => text(node.val));
 				break;
 
 			case PugNodeType.Code:
@@ -124,7 +130,7 @@ const render = ({ ast, props }) =>
 				if (parent.type === PugNodeType.Tag) {
 					// Interpret as interpolated text
 					const path = node.val.split('.');
-					text(R.path(path, props));
+					commands.push((props) => text(R.path(path, props)));
 				}
 				break;
 
@@ -133,6 +139,10 @@ const render = ({ ast, props }) =>
 				console.error('unhandled.');
 		}
 	}(ast, undefined));
+
+	// The compiled fn list, injecting props
+	return (props) => commands.forEach(cmd => cmd(props));
+}
 
 const root = document.createElement('root');
 
@@ -144,19 +154,18 @@ const state = {
 	time: Date.now(),
 	input: (evt) => {
 		name = evt.target.value;
-	},
-};
+	}
+}
 
 const tokens = lexer(tpl);
 const component = parser(tokens);
+const renderer = compile(component);
+
 setInterval(() => {
 	const newState = immutable(state)
 		.set('name', name)
 		.set('time', Date.now())
 		.value();
 
-	idom.patch(root, render, {
-		ast: component,
-		props: newState,
-	});
+	idom.patch(root, renderer, newState);
 });
