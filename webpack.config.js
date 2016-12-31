@@ -6,7 +6,6 @@ var path = require('path');
 var DashboardPlugin = require('webpack-dashboard/plugin');
 
 const wpPlugins = [
-	new DashboardPlugin({ port: 8008 })
 ];
 
 // Gen env arg
@@ -34,7 +33,11 @@ if (buildEnv === 'prod') {
 		filename: '[file].map[query]',
 		lineToLine: false,
 		module: false
-	}));
+	}),
+		// @todo: dashboard stops webpack from exiting if it's not in dev server
+		// mode -- bleh.
+	 new DashboardPlugin({ port: 8008 })
+	);
 }
 
 module.exports = {
