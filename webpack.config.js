@@ -50,6 +50,7 @@ module.exports = {
 			{ test: /\.css$/, loaders: ['style', 'css', 'postcss'] },
 			{ test: /\.less$/, loaders: ['style', 'css', 'postcss', 'less'] },
 			{ test: /\.tpl\.(pug|jade)$/, loaders: ['html?removeRedundantAttributes=false', 'jade-html'] },
+			{ test: /\.pug$/, loaders: ['raw'] },
 			{ test: /\.tpl\.html$/, loaders: ['html?removeRedundantAttributes=false'] },
 			{ test: /[^\.][^t][^p][^l]\.(pug|jade)$/, loaders: ['file?name=[name].html', 'jade-html' ] },
 			{ test: /index\.scss$/, loaders: ['file?name=[name].css', 'postcss', 'sass']},
