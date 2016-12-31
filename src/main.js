@@ -27,23 +27,61 @@ const PugNodeType = {
 	Code: 'Code',
 };
 
-const parseAttrs = (attrs) => {
-	const out = [];
-	// const events = [];
-	const [
+const parseAttrs = (attrs, props) => {
+	const staticAttrs = [];
+	const dynamicAttrs = [];
+
+	const {
 		classes,
-	] = R.partition(x => x.name === 'class', attrs);
+		events,
+		rest,
+	} = R.reduce(
+		(acc, x) => {
+			const token = x.name.toLowerCase();
+			if (token.startsWith('on')) {
+				acc.events.push(x);
+			} else if (token === 'class') {
+				acc.classes.push(x);
+			} else {
+				acc.rest.push(x);
+			}
+
+			return acc;
+		},
+		{ events: [], classes: [], rest: [] },
+		attrs
+	);
 
 	if (classes.length) {
-		out.push('class', classes.join(' '));
+		staticAttrs.push('class', classes.join(' '));
 	}
 
-	// if (rest.length) {
-	// 	// console.debug(rest);
-	// }
+	if (events.length) {
+		events.forEach(
+			x => dynamicAttrs.push(x.name, R.path(x.val.split('.'), props))
+		);
+	}
 
-	return out;
+	if (rest.length) {
+		rest.forEach(
+			x => staticAttrs.push(x.name, x.val)
+		);
+	}
+
+	return {
+		dynamicAttrs,
+		staticAttrs,
+	};
 };
+
+const isVoidElt = (node) =>
+	node.selfClosing ||
+	(
+		node.type === PugNodeType.Tag &&
+		[
+			'input',
+		].includes(node.name.toLowerCase())
+	);
 
 // @todo: we can push these calls into a list
 // @todo: and we can develop smart inc-dom...
@@ -54,22 +92,25 @@ const render = ({ ast, props }) =>
 	(function recurse(node, parent) {
 		switch (node.type) {
 			case PugNodeType.Block:
-				node.nodes.map(x => recurse(x, node));
+				node.nodes.forEach(x => recurse(x, node));
 				break;
 
 			case PugNodeType.Tag: {
-				// @todo: this better
-				const attrs = parseAttrs(node.attrs, node, parent);
-				const args = [node.name, undefined, [], attrs];
 
-				if (node.selfClosing) {
+				const { staticAttrs, dynamicAttrs } = parseAttrs(node.attrs, props);
+				const args = [node.name, undefined, staticAttrs, dynamicAttrs];
+				if (dynamicAttrs.length) {
+					console.debug(node);
+				}
+
+				if (isVoidElt(node)) {
 					elementVoid.apply(undefined, args);
 					break;
 				}
 
 				elementOpen.apply(undefined, args);
 				if (node.block) {
-					node.block.nodes.map(x => recurse(x, node));
+					node.block.nodes.forEach(x => recurse(x, node));
 				}
 				elementClose(node.name);
 			}
@@ -109,13 +150,13 @@ const state = {
 
 const tokens = lexer(tpl);
 const component = parser(tokens);
-setInterval(() => {
-	const newState = immutable(state)
+// setInterval(() => {
+const newState = immutable(state)
 		.set('time', Date.now())
 		.value();
 
-	idom.patch(root, render, {
-		component,
-		props: newState,
-	});
+idom.patch(root, render, {
+	ast: component,
+	props: newState,
 });
+// });
