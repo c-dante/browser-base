@@ -3,9 +3,11 @@ var webpack = require('webpack');
 var autoprefixer = require('autoprefixer');
 var cssnano = require('cssnano');
 var path = require('path');
+var DashboardPlugin = require('webpack-dashboard/plugin');
 
-
-const wpPlugins = [];
+const wpPlugins = [
+	new DashboardPlugin({ port: 8008 })
+];
 
 // Gen env arg
 const buildEnv = process.argv.filter(

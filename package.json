@@ -7,6 +7,7 @@
     "aws-deploy": "aws s3 sync --acl public-read --delete ./bin",
     "linter": "./node_modules/eslint/bin/eslint.js --fix src/ test/",
     "server": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js --hot --inline --progress",
+    "dev": "./node_modules/webpack-dashboard/bin/webpack-dashboard.js -p 8008 -- npm run server",
     "test": "./node_modules/mocha/bin/mocha --compilers js:babel-register src/**/*.spec.js",
     "web-test": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js \"mocha!../test/allTests.js\" --target web --output-file test.bundle.js --hot --inline --progress --port 8081"
   },
