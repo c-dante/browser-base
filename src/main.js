@@ -27,6 +27,7 @@ const PugNodeType = {
 	Code: 'Code',
 };
 
+// @todo: eval the argval?!? gross.
 const parseAttrs = (attrs, props) => {
 	const staticAttrs = [];
 	const dynamicAttrs = [];
@@ -34,7 +35,7 @@ const parseAttrs = (attrs, props) => {
 	const {
 		classes,
 		events,
-		rest
+		rest,
 	} = R.reduce(
 		(acc, x) => {
 			const token = x.name.toLowerCase();
@@ -45,23 +46,23 @@ const parseAttrs = (attrs, props) => {
 			} else {
 				acc.rest.push(x);
 			}
-			
+
 			return acc;
 		},
 		{ events: [], classes: [], rest: [] },
 		attrs
 	);
-	
+
 	if (classes.length) {
-		staticAttrs.push('class', classes.join(' '));
+		staticAttrs.push('class', classes.map(x => x.val.slice(1, -1)).join(' '));
 	}
-	
+
 	if (events.length) {
 		events.forEach(
 			x => dynamicAttrs.push(x.name, R.path(x.val.split('.'), props))
 		);
 	}
-	
+
 	if (rest.length) {
 		rest.forEach(
 			x => staticAttrs.push(x.name, x.val)
@@ -70,16 +71,16 @@ const parseAttrs = (attrs, props) => {
 
 	return {
 		dynamicAttrs,
-		staticAttrs
+		staticAttrs,
 	};
-}
+};
 
-const isVoidElt = (node) => 
+const isVoidElt = (node) =>
 	node.selfClosing ||
 	(
 		node.type === PugNodeType.Tag &&
 		[
-			'input'
+			'input',
 		].includes(node.name.toLowerCase())
 	);
 
@@ -89,14 +90,14 @@ const render = ({ ast, props }) =>
 	// @todo: this can be so optimized.
 	// @todo: static parts of the tree can stay fine
 	// @todo: determine where my code goes to generate a sexy idom loop
-	(function recurse(node, parent){
+	(function recurse(node, parent) {
 		switch (node.type) {
 			case PugNodeType.Block:
 				node.nodes.forEach(x => recurse(x, node));
 				break;
-			
+
 			case PugNodeType.Tag: {
-				
+
 				const { staticAttrs, dynamicAttrs } = parseAttrs(node.attrs, props);
 				const args = [node.name, undefined, staticAttrs, dynamicAttrs];
 
@@ -111,12 +112,12 @@ const render = ({ ast, props }) =>
 				}
 				elementClose(node.name);
 			}
-			break;
-			
+				break;
+
 			case PugNodeType.Text:
 				text(node.val);
 				break;
-				
+
 			case PugNodeType.Code:
 				// @todo: this is one of the only times we depend on props...
 				// @todo: only paths for now?
@@ -137,23 +138,25 @@ const root = document.createElement('root');
 
 document.body.appendChild(root);
 
+let name = 'Frank';
 const state = {
-	name: 'Frank',
+	name,
 	time: Date.now(),
-	input: (...args) => {
-		console.debug('Input', args);
-	}
-}
+	input: (evt) => {
+		name = evt.target.value;
+	},
+};
 
 const tokens = lexer(tpl);
 const component = parser(tokens);
 setInterval(() => {
 	const newState = immutable(state)
+		.set('name', name)
 		.set('time', Date.now())
 		.value();
 
 	idom.patch(root, render, {
 		ast: component,
-		props: newState
+		props: newState,
 	});
 });
