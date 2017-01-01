@@ -3,7 +3,6 @@ var webpack = require('webpack');
 var autoprefixer = require('autoprefixer');
 var cssnano = require('cssnano');
 var path = require('path');
-var DashboardPlugin = require('webpack-dashboard/plugin');
 
 const wpPlugins = [
 ];
@@ -33,11 +32,7 @@ if (buildEnv === 'prod') {
 		filename: '[file].map[query]',
 		lineToLine: false,
 		module: false
-	}),
-		// @todo: dashboard stops webpack from exiting if it's not in dev server
-		// mode -- bleh.
-	 new DashboardPlugin({ port: 8008 })
-	);
+	}));
 }
 
 module.exports = {
