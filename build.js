@@ -3,8 +3,10 @@ const merge = require('merge-dirs').default;
 const config = require('./webpack.config');
 const del = require('del');
 
+delete config.devServer;
+
 console.log('Clearing bin');
-del(['./bin']).then(paths =>
+return del(['./bin']).then(paths =>
 	new Promise((res, rej) =>
 		wp(config, (err, stats) => {
 			if (err) {
@@ -23,7 +25,12 @@ del(['./bin']).then(paths =>
 			}
 			console.log('Merging assets');
 			merge('./assets', './bin', 'ask');
+			console.log('Mergind done');
+			return res('Done.');
 		})
 	)
-)
+).then(
+	res => console.log(res),
+	rej => console.error(rej)
+);
 
