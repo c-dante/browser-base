@@ -15,6 +15,11 @@ html(lang='en')
 		)
 	body
 		h1.hidden.content-loading Loading...
+		
+		test-elt(callback="testCallback")
+			h1 Did it work?
+			
+		button#goBtn CHANGE PLACES!
 
 		script(
 			src="app.bundle.js",
