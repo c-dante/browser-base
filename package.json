@@ -1,7 +1,7 @@
 {
-  "name": "browser-base",
-  "version": "0.4.1",
-  "repository": "c-dante/browser-base",
+  "name": "pug-inc",
+  "version": "0.0.1",
+  "repository": "c-dante/pug-inc",
   "scripts": {
     "compiler": "node ./build",
     "aws-deploy": "aws s3 sync --acl public-read --delete ./bin",
@@ -22,12 +22,14 @@
     "object-path-immutable": "^0.5.1",
     "pug-lexer": "^2.3.0",
     "pug-parser": "^2.0.1",
-    "ramda": "^0.23.0"
+    "ramda": "^0.23.0",
+    "webcomponents.js": "^0.7.23"
   },
   "devDependencies": {
     "autoprefixer": "^6.3.3",
     "babel-core": "^6.7.2",
     "babel-loader": "^6.2.4",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.18.0",
     "babel-plugin-transform-object-rest-spread": "^6.8.0",
     "babel-preset-es2015": "^6.6.0",
     "babel-register": "^6.7.2",
