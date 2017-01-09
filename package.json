@@ -23,6 +23,7 @@
     "pug-lexer": "^2.3.0",
     "pug-parser": "^2.0.1",
     "ramda": "^0.23.0",
+    "void-elements": "^2.0.1",
     "webcomponents.js": "^0.7.23"
   },
   "devDependencies": {

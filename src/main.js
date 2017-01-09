@@ -1,28 +1,51 @@
 import './main.scss';
 import 'webcomponents.js';
 
-const failFn = (x) => console.error('FAILURE', x);
-const root = {
-	testCallback: (x) => console.debug('testCallback', x),
-	newCallback: (x) => console.debug('newCallback', x),
-	failFn,
-};
+import { patch } from 'incremental-dom';
+import { compile } from './pug-inc';
 
+import appTpl from './app.tpl.pug';
 
-class TestElt extends HTMLElement {
+const renderAppDom = compile(appTpl);
+
+class App extends HTMLElement {
 	constructor() {
 		super();
 
-		console.debug(this);
-	}
+		// Base state
+		this.svg = {
+			width: 1280,
+			height: 600,
+		};
 
-	static get observedAttributes() {
-		return ['callback'];
-	}
+		this.state = {
+			currentMax: 0,
+			baseW: 80,
+			heightFactor: 0,
+			lean: 0,
+		};
 
-	attributeChangedCallback(attr, oldValue, newValue) {
-		(root[newValue] || failFn)(' :D ');
+		// Calc tree props
+		const baseTreeProps = {
+			w: this.state.baseW,
+			h: this.state.baseW,
+			heightFactor: this.state.heightFactor,
+			lean: this.state.lean,
+			x: this.svg.width / 2 - 40,
+			y: this.svg.height - this.state.baseW,
+			lvl: 0,
+			maxLvl: this.state.currentMax,
+		};
+
+		// Render props
+		const props = {
+			baseTreeProps,
+			svgProps: this.svg,
+		};
+
+		// Do render
+		patch(this, renderAppDom, props);
 	}
 }
 
-customElements.define('test-elt', TestElt);
+customElements.define('my-app', App);
