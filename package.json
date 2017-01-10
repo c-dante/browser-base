@@ -17,6 +17,8 @@
     }
   },
   "dependencies": {
+    "d3-scale": "^1.0.4",
+    "d3-selection": "^1.0.3",
     "incremental-dom": "^0.5.1",
     "normalize.css": "^4.2.0",
     "object-path-immutable": "^0.5.1",

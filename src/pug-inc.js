@@ -54,9 +54,13 @@ const isVoidElt = (node) =>
 		voidElts[node.name.toLowerCase()]
 	);
 
-const attrToValue = ({ val }) => {
+const attrToValue = ({ val }, props) => {
 	if (R.is(String, val)) {
-		return val.slice(1, -1);
+		if (val.startsWith('"') || val.startsWith('\'')) {
+			return val.slice(1, -1);
+		} else {
+			return R.path(val.split('.'), props);
+		}
 	}
 	return val;
 };
@@ -70,8 +74,6 @@ const attrToValue = ({ val }) => {
  * @returns {ParsedAttrs}
  */
 const parseAttrs = (attrs, props) => {
-	console.debug('Parsing attrs...', attrs, props);
-
 	const staticAttrs = [];
 	const dynamicAttrs = [];
 
@@ -111,7 +113,7 @@ const parseAttrs = (attrs, props) => {
 
 	if (rest.length) {
 		rest.forEach(
-			x => staticAttrs.push(x.name, attrToValue(x))
+			x => staticAttrs.push(x.name, attrToValue(x, props))
 		);
 	}
 
