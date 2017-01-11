@@ -1,15 +1,12 @@
-# pug-inc
-A subset of [pug](https://github.com/pugjs/pug) templates compiling to [incremental-dom](https://github.com/google/incremental-dom) functions
+# inc-dom
+[So here it is.](c-dante.github.io/browser-base/inc-dom)
 
+I implemented the [react-fractal](https://swizec.github.io/react-fractals/) exmaple in pure [incremental-dom](https://github.com/google/incremental-dom).
+It looks pretty smooth, I'd sa.
 
-## Why
-Ever see a PHP template? Looks miiiiiiighty similar to the stuff people are building with React, doesn't it...
+### Why
+So you like dom manipulations?!
 
-I'm NOT a fan of code and template mingling. I like my templates to just describe value bindings.
+What happens when you have an API that mirrors what's actually happening?
 
-Pug is a really nice, succinct langauge to build nested DOM elements.
-
-Mostly a thought project. Maybe it will take shape. Maybe it won't. Who knows?
-
-### Perf
-Example is an implementation of an attempt at [react-fractals](https://github.com/Swizec/react-fractals).
+Well, you can do whatever you want.
