@@ -1,14 +1,8 @@
 import './main.scss';
-import { select, mouse } from 'd3-selection';
 import { scaleLinear } from 'd3-scale';
 
 import { patch } from 'incremental-dom';
-import { compile } from './pug-inc';
 import { Pythagoras } from './pythagoran';
-
-import appTpl from './app.tpl.pug';
-
-const renderAppDom = compile(appTpl);
 
 // Update my-app with mouse stuff
 function throttleWithRAF (fn) {
@@ -63,7 +57,7 @@ const update = (evt) => {
 		lvl: 0,
 		maxlvl: 11,
 	};
-	
-	Pythagoras(svgNode, baseTreeProps);
+
+	patch(svgNode, Pythagoras, baseTreeProps);
 };
 svgNode.addEventListener('mousemove', throttleWithRAF(update));

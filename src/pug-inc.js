@@ -13,10 +13,10 @@ import R from 'ramda';
 
 const fixIdom = fn => (tagname, key, staticProp, rest) =>
 	fn.apply(undefined, [tagname, key, staticProp].concat(rest));
-const elementOpen = fixIdom(idom.elementOpen);
-const elementClose = idom.elementClose;
-const elementVoid = fixIdom(idom.elementVoid);
-const text = (str, formatters = []) => idom.text.apply(undefined, [str].concat(formatters));
+export const elementOpen = fixIdom(idom.elementOpen);
+export const elementClose = idom.elementClose;
+export const elementVoid = fixIdom(idom.elementVoid);
+export const text = (str, formatters = []) => idom.text.apply(undefined, [str].concat(formatters));
 
 /**
  * Incremental dom backed pug templates
