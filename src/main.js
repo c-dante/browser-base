@@ -1,8 +1,10 @@
 import './main.scss';
 import { scaleLinear } from 'd3-scale';
-
+import { select, mouse as d3mouse } from 'd3-selection';
 import { patch } from 'incremental-dom';
 import { Pythagoras } from './pythagoran';
+
+console.debug(d3mouse);
 
 // Update my-app with mouse stuff
 function throttleWithRAF (fn) {
@@ -35,10 +37,7 @@ const scaleLean = scaleLinear()
 	.domain([0, svgSize.width / 2, svgSize.width])
 	.range([.5, 0, -.5]);
 
-const update = (evt) => {
-	const x = evt.clientX;
-	const y = evt.clientY;
-
+const update = ([x, y]) => {
 	const state = {
 		currentMax: 0,
 		baseW: 80,
@@ -60,4 +59,8 @@ const update = (evt) => {
 
 	patch(svgNode, Pythagoras, baseTreeProps);
 };
-svgNode.addEventListener('mousemove', throttleWithRAF(update));
+
+const throttleUpdate = throttleWithRAF(update);
+select(svgNode).on('mousemove', () =>
+	throttleUpdate(d3mouse(svgNode))
+);
