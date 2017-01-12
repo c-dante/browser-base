@@ -25,7 +25,7 @@ return del(['./bin']).then(paths =>
 			}
 			console.log('Merging assets');
 			merge('./assets', './bin', 'ask');
-			console.log('Mergind done');
+			console.log('Merging done');
 			return res('Done.');
 		})
 	)
