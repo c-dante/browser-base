@@ -1,11 +1,8 @@
 import './main.scss';
-import env from 'environment';
+import mainTpl from './main.tpl.pug';
 
-
-console.debug('Hello world', env);
-
-
-
-
-
-
+document.querySelector('body').innerHTML = mainTpl({
+	x: 10,
+	y: [1, 2, 3],
+	z: 'Words'
+});

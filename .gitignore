@@ -1,6 +1,5 @@
 # Build Artifacts
 bin
-docs
 
 # Dependencies
 node_modules
