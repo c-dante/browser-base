@@ -22,6 +22,10 @@ module.exports = {
 
 		// use tabs only
 		indent: [2, 'tab', { SwitchCase: 1 }],
+		'no-tabs': 0,
+		
+		// Prefer individual symbols
+		'import/prefer-default-export': 0,
 
 		// use one space anywhere we allow space
 		'no-multi-spaces': [2],
