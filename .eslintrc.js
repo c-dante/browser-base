@@ -22,6 +22,14 @@ module.exports = {
 
 		// use tabs only
 		indent: [2, 'tab', { SwitchCase: 1 }],
+		'no-tabs': [0],
+
+		// Allow individual symbols / no default export
+		// Imports do not need to be at the top of the file
+		// New line not required after import
+		'import/prefer-default-export': [0],
+		'import/first': [0],
+		'import/newline-after-import': [0],
 
 		// use one space anywhere we allow space
 		'no-multi-spaces': [2],
@@ -44,8 +52,19 @@ module.exports = {
 		// only provide a radix to parseInt if it is not 10
 		radix: [2, 'as-needed'],
 
-		// set max line length to a more reasonable number
-		'max-len': [2, 120],
+		// Allow maths
+		'no-plusplus': [0],
+
+		// set max line length and configure to allow normal things
+		'max-len': [2, {
+			code: 120,
+			tabWidth: 2,
+			ignoreComments: true,
+			ignoreUrls: true,
+			ignoreStrings: true,
+			ignoreTemplateLiterals: true,
+			ignoreRegExpLiterals: true,
+		}],
 	},
 	env: {
 		mocha: true,
