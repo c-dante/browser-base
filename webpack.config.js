@@ -9,26 +9,40 @@ const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin');
 
 const plugins = [
 	new webpack.SourceMapDevToolPlugin(),
+	// https://webpack.js.org/plugins/commons-chunk-plugin/
 	new webpack.optimize.CommonsChunkPlugin({
 		name: 'vendor',
 		minChunks: function(module){
+			// @todo: do we want to include/exclude vendor CSS?
+			if(module.resource && (/^.*\.(css|scss)$/).test(module.resource)) {
+				return false;
+			}
 			return module.context && module.context.indexOf('node_modules') !== -1;
 		},
 	}),
 	new webpack.optimize.CommonsChunkPlugin({
 		name: 'manifest',
+		minChunks: Infinity, // @todo: review
 	}),
-	// new webpack.HashedModuleIdsPlugin(),
-	// new WebpackChunkHash(),
-	// new ChunkManifestPlugin({
-	// 	filename: 'chunk-manifest.json',
-	// 	manifestVariable: 'webpackManifest',
-	// 	inlineManifest: true,
-	// }),
+	new webpack.HashedModuleIdsPlugin(),
+	new WebpackChunkHash(),
+	new ChunkManifestPlugin({
+		filename: 'chunk-manifest.json',
+		manifestVariable: 'webpackManifest',
+		// inlineManifest: true,
+	}),
+	// https://github.com/jantimon/html-webpack-plugin
 	new HtmlWebpackPlugin({
 		title: 'Demo Page',
+		chunksSortMode: 'dependency',
 	}),
+	// https://github.com/numical/script-ext-html-webpack-plugin
 	new ScriptExtHtmlWebpackPlugin({
+		sync: [
+			// @todo: figure out async vendor file D:
+			/manifest\..*\.js/,
+			/vendor\..*\.js/,
+		],
 		defaultAttribute: 'async',
 	}),
 	new HtmlWebpackHarddiskPlugin({
@@ -105,17 +119,4 @@ module.exports = {
 		filename: process.env.NODE_ENV === 'production' ? '[name].[chunkhash].bundle.js' : '[name].bundle.js',
 		path: path.resolve(process.cwd(), 'bin'),
 	},
-	// devServer: {
-	// 	publicPath: '/',
-	// 	outputPath: '/',
-	// 	filename: 'app.bundle.js',
-	// 	watchOptions: undefined,
-	// 	watchDelay: undefined,
-	// 	contentBase: path.resolve(process.cwd(), 'src'),
-	// 	stats: {
-	// 		cached: false,
-	// 		cachedAssets: false,
-	// 		colors: true
-	// 	}
-	// }
 };
