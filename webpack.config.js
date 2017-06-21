@@ -1,10 +1,41 @@
 const path = require('path');
 const webpack = require('webpack');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
+const WebpackChunkHash = require('webpack-chunk-hash');
+const ChunkManifestPlugin = require('chunk-manifest-webpack-plugin');
+const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin');
 
 const plugins = [
-	new webpack.SourceMapDevToolPlugin()
+	new webpack.SourceMapDevToolPlugin(),
+	new webpack.optimize.CommonsChunkPlugin({
+		name: 'vendor',
+		minChunks: function(module){
+			return module.context && module.context.indexOf('node_modules') !== -1;
+		},
+	}),
+	new webpack.optimize.CommonsChunkPlugin({
+		name: 'manifest',
+	}),
+	// new webpack.HashedModuleIdsPlugin(),
+	// new WebpackChunkHash(),
+	// new ChunkManifestPlugin({
+	// 	filename: 'chunk-manifest.json',
+	// 	manifestVariable: 'webpackManifest',
+	// 	inlineManifest: true,
+	// }),
+	new HtmlWebpackPlugin({
+		title: 'Demo Page',
+	}),
+	new ScriptExtHtmlWebpackPlugin({
+		defaultAttribute: 'async',
+	}),
+	new HtmlWebpackHarddiskPlugin({
+		outputPath: path.resolve(__dirname, 'views'),
+	}),
 ];
+
 if (process.env.NODE_ENV === 'production') {
 	plugins.push(
 		new UglifyJSPlugin()
@@ -20,7 +51,7 @@ module.exports = {
 					/\/src\//,
 					/\.js$/,
 				],
-				loaders: [ 'babel-loader' ]
+				loaders: [ 'babel-loader' ],
 			},
 			{
 				test: /\.(ico|eot|woff|woff2|ttf|svg|png|jpg)(\?.*)?$/,
@@ -67,12 +98,11 @@ module.exports = {
 	entry: {
 		app: [
 			'./index.scss',
-			'./index.pug',
 			'./main.js',
 		],
 	},
 	output: {
-		filename: '[name].bundle.js',
+		filename: process.env.NODE_ENV === 'production' ? '[name].[chunkhash].bundle.js' : '[name].bundle.js',
 		path: path.resolve(process.cwd(), 'bin'),
 	},
 	// devServer: {
