@@ -5,13 +5,15 @@ module.exports = {
 		'import/extensions': ['.js'],
 	},
 	extends: [
-		'airbnb/base',
+		'eslint:recommended',
 		'plugin:import/errors',
 		'plugin:import/warnings',
 	],
 	root: true,
+	parser: 'babel-eslint',
 	parserOptions: {
 		ecmaVersion: 6,
+		sourceType: 'module',
 		ecmaFeatures: {
 			experimentalObjectRestSpread: true
 		}
@@ -23,7 +25,7 @@ module.exports = {
 		// use tabs only
 		indent: [2, 'tab', { SwitchCase: 1 }],
 		'no-tabs': 0,
-		
+
 		// Prefer individual symbols
 		'import/prefer-default-export': 0,
 
@@ -54,5 +56,6 @@ module.exports = {
 	env: {
 		mocha: true,
 		browser: true,
+		es6: true,
 	}
 };
