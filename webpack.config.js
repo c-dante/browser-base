@@ -42,6 +42,7 @@ const plugins = [
 			// @todo: figure out async vendor file D:
 			/manifest\..*\.js/,
 			/vendor\..*\.js/,
+			/main\..*\.js/,
 		],
 		defaultAttribute: 'async',
 	}),
@@ -105,6 +106,10 @@ module.exports = {
 					'postcss-loader',
 					'sass-loader'
 				],
+			},
+			{
+				test: /allTest.js$/,
+				loaders: ['mocha-loader'],
 			},
 		],
 	},
