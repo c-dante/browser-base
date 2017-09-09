@@ -1,6 +1,5 @@
 # Build Artifacts
 bin
-docs
 
 # Dependencies
 node_modules
@@ -14,9 +13,6 @@ node_modules
 # Generated / Data files
 *.meta
 *.log
-
-# Misc
-data/
 
 # Optional REPL history
 .node_repl_history

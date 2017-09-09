@@ -1,88 +1,115 @@
-'use strict';
-var webpack = require('webpack');
-var autoprefixer = require('autoprefixer');
-var cssnano = require('cssnano');
-var path = require('path');
+const path = require('path');
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
+const StyleExtHtmlWebpackPlugin = require('style-ext-html-webpack-plugin');
+const WebpackChunkHash = require('webpack-chunk-hash');
+const ChunkManifestPlugin = require('chunk-manifest-webpack-plugin');
+const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin');
+const InlineChunkManifestHtmlWebpackPlugin = require('inline-chunk-manifest-html-webpack-plugin');
 
-const wpPlugins = [
-];
+const entrypoints = {
+	app: ['./app.js'],
+};
 
-// Gen env arg
-const buildEnv = process.argv.filter(
-	(arg, i, col) => i > 0 && col[i - 1] === '--env'
-)[0] || 'localhost';
+// @todo: pluck from env vars
+const debugEnabled = true;
+const isProd = false;
 
-console.log('BUILD ENV: ', buildEnv);
+const plugins = [
+	new webpack.optimize.CommonsChunkPlugin({
+		name: 'vendor',
+		minChunks: function(module){
+			if (module.resource && (/^.*\.(css|scss)$/).test(module.resource)) {
+				return false;
+			}
+			return module.context && module.context.indexOf('node_modules') !== -1;
+		},
+	}),
+	new webpack.optimize.CommonsChunkPlugin({
+		name: 'manifest',
+		minChunks: Infinity,
+	}),
+	new webpack.HashedModuleIdsPlugin(),
+	new WebpackChunkHash(),
 
-if (buildEnv === 'prod') {
-	wpPlugins.push(
-			new webpack.optimize.UglifyJsPlugin({
-		sourceMap: false
-		}),
-		new webpack.optimize.DedupePlugin(),
-		new webpack.DefinePlugin({
-			'process.env.NODE_ENV': '"production"'
-		})
-	);
-} else {
-	wpPlugins.push(new webpack.SourceMapDevToolPlugin({
+	// https://github.com/jantimon/html-webpack-plugin
+	new HtmlWebpackPlugin({
+		chunksSortMode: 'dependency',
+		chunks: ['manifest', 'vendor', 'app'],
+		template: 'index.pug'
+	}),
+	new InlineChunkManifestHtmlWebpackPlugin(),
+
+	//
+	// https://github.com/numical/script-ext-html-webpack-plugin
+	new ScriptExtHtmlWebpackPlugin({
+		sync: [
+			/manifest\..*\.js/,
+			/vendor\..*\.js/,
+			/app\..*\.js/,
+		],
+		defaultAttribute: 'async',
+	}),
+
+	new HtmlWebpackHarddiskPlugin({
+		outputPath: path.resolve(__dirname, 'views'),
+	}),
+	new webpack.LoaderOptionsPlugin({
+		debug: debugEnabled,
+	}),
+
+	// @todo: these are for dev -- for prod builds, do your own thing
+	new webpack.SourceMapDevToolPlugin({
 		// exclude the index entry point
 		exclude: /.*index.*$/,
 		columns: false,
 		filename: '[file].map[query]',
 		lineToLine: false,
 		module: false
-	}));
-}
+	}),
+];
 
 module.exports = {
-	resolve: {
-		alias: {
-			environment: path.resolve(process.cwd(), 'env', buildEnv)
-		}
-	},
 	module:	{
-		loaders: [
-			{ test: /\.js$/, exclude: /node_modules/, loaders: ['babel'] },
-			{ test: /\.(ico|eot|woff|woff2|ttf|svg|png|jpg)(\?.*)?$/, loaders: ['file'] },
-			{ test: /\.css$/, loaders: ['style', 'css', 'postcss'] },
-			{ test: /\.less$/, loaders: ['style', 'css', 'postcss', 'less'] },
-			{ test: /\.tpl\.(pug|jade)$/, loaders: ['html?removeRedundantAttributes=false', 'jade-html'] },
-			{ test: /\.pug$/, loaders: ['raw'] },
-			{ test: /\.tpl\.html$/, loaders: ['html?removeRedundantAttributes=false'] },
-			{ test: /[^\.][^t][^p][^l]\.(pug|jade)$/, loaders: ['file?name=[name].html', 'jade-html' ] },
-			{ test: /index\.scss$/, loaders: ['file?name=[name].css', 'postcss', 'sass']},
-			{ test: /\.(sass|scss)$/, loaders: ['style', 'css', 'postcss', 'sass'], exclude: /index\.scss$/ },
-			{ test: /[^\.][^t][^p][^l]\.html$/, loaders: ['file?name=[name].[ext]'] }
+		rules: [
+			{
+				include: /(src|test).*\.js$/,
+				loaders: [ 'babel-loader' ],
+			},
+			{
+				test: path.resolve(process.cwd(), 'src/app.scss'),
+				loaders: [
+					'style-loader',
+					'css-loader',
+					'postcss-loader',
+					'sass-loader',
+				]
+			},
+			{
+				include: /\.tpl\.(pug)$/,
+				loaders: [
+					'html-loader?removeRedundantAttributes=false',
+					'pug-html-loader'
+				],
+			},
+			{
+				include: /[^\.][^t][^p][^l]\.pug$/,
+				loaders: [
+					'pug-loader?exports=false',
+				],
+			},
+			{
+				include: /\.json$/,
+				loaders: ['json-loader'],
+			},
 		]
 	},
-	postcss: function(){
-		return [autoprefixer,cssnano]
-	},
-	plugins: wpPlugins,
-	entry: {
-		app: [
-			'./index.scss',
-			'./index.jade',
-			'./main.js',
-		]
-	},
+	plugins: plugins,
+	entry: entrypoints,
 	output: {
-		filename: '[name].bundle.js',
-		path: path.resolve(process.cwd(), 'bin')
+		filename: isProd ? '[name].[hash].bundle.js' : '[name].bundle.js',
+		path: path.resolve(process.cwd(), 'bin'),
 	},
 	context: path.resolve(process.cwd(), 'src'),
-	devServer: {
-		publicPath: '/',
-		outputPath: '/',
-		filename: 'app.bundle.js',
-		watchOptions: undefined,
-		watchDelay: undefined,
-		contentBase: path.resolve(process.cwd(), 'src'),
-		stats: {
-			cached: false,
-			cachedAssets: false,
-			colors: true
-		}
-	}
 };
