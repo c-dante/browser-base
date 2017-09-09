@@ -1,3 +1,6 @@
+# angular.js
+This is the browser base [angular.js](https://angularjs.org) branch. It serves as a boilerplate project using angular as the front end framework.
+
 # browser-base
 Use this to start other web projects. It gives you a good base to start from including
 + has an .editorconfig to enforce typographic style like tabs instead of spaces and no trailing whitespace
