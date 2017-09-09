@@ -10,7 +10,9 @@
     "test": "echo \"UNIMPLEMENTED\" && exit 0",
     "precommit": "npm run linter"
   },
-  "dependencies": {},
+  "dependencies": {
+    "angular": "^1.6.6"
+  },
   "devDependencies": {
     "autoprefixer": "^7.1.4",
     "babel-core": "^6.26.0",
