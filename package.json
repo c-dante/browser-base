@@ -11,7 +11,8 @@
     "precommit": "npm run linter"
   },
   "dependencies": {
-    "angular": "^1.6.6"
+    "angular": "^1.6.6",
+    "milligram": "^1.3.0"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.4",

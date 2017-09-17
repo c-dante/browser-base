@@ -1,8 +1,9 @@
-h3 Main
-p This is an example main component
-
-form
-	label Name
-		input(ng-model="$ctrl.name")
-
-p {{ $ctrl.name }}
+section
+	h1 Main
+	p This is an example main component
+	p What's good, {{ $ctrl.name }}?`
+	form
+		label Name
+		input(
+			ng-model="$ctrl.name"
+		)
