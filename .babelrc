@@ -1,0 +1,19 @@
+{
+	"presets": [
+		[
+			"@babel/preset-env",
+			{
+				"modules": false,
+				"useBuiltIns": "entry",
+				"targets": {
+					"browsers": ["last 2 versions"]
+				}
+			}
+		]
+	],
+	"plugins": [
+		"@babel/plugin-syntax-object-rest-spread",
+		"@babel/plugin-proposal-class-properties"
+	],
+}
+
