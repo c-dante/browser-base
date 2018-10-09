@@ -28,6 +28,12 @@ const splitChunks = {
 			chunks: 'all',
 			priority: -10,
 		},
+		styles: {
+			name: 'styles',
+			test: /\.css$/,
+			chunks: 'all',
+			enforce: true
+		},
 		default: {
 			minChunks: 2,
 			priority: -20,
@@ -53,6 +59,7 @@ const buildPlugins = [
 		template: './manifest.tpl',
 		inject: false,
 	}),
+
 	// Build the app
 	new HtmlWebpackPlugin({
 		title: 'Development Title',
@@ -64,12 +71,6 @@ const buildPlugins = [
 			/vendors.*\.js/,
 		],
 		defaultAttribute: 'async',
-	}),
-	new MiniCssExtractPlugin({
-		// Options similar to the same options in webpackOptions.output
-		// both options are optional
-		filename: '[name].css',
-		chunkFilename: '[id].css'
 	}),
 ];
 
@@ -85,6 +86,11 @@ const devPlugins = [
 
 const prodPlugins = [
 	new CleanWebpackPlugin(['dist']),
+
+	// @see https://webpack.js.org/plugins/mini-css-extract-plugin/
+	new MiniCssExtractPlugin({
+		filename: '[name].[contenthash].css',
+	}),
 ];
 
 /**
@@ -100,8 +106,8 @@ module.exports = ({
 	const mode = production ? 'production' : 'development';
 
 	const plugins = [
-		...buildPlugins,
 		...(production ? prodPlugins : devPlugins),
+		...buildPlugins,
 	];
 
 	const optimization = {
@@ -118,15 +124,29 @@ module.exports = ({
 		},
 		module: {
 			rules: [
+				// templates
+				{
+					test: /\.tpl\.pug$/,
+					use: [
+						'pug-loader'
+					],
+				},
 				// styles
 				{
 					test: /\.css$/,
 					use: [
-						// @todo: clean up prod
-						production ? { loader: MiniCssExtractPlugin.loader } : 'style-loader',
+						production ? MiniCssExtractPlugin.loader : 'style-loader',
 						'css-loader'
 					],
 				},
+//				{
+//					test: /\.scss$/,
+//					use: [
+//						production ? MiniCssExtractPlugin.loader : 'style-loader',
+//						'css-loader',
+//						'sass-loader',
+//					],
+//				},
 				// js / babel
 				{
 					test: /\.m?js$/,

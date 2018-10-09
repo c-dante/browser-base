@@ -1,0 +1,12 @@
+.outer {
+	color: blue;
+}
+
+.outer .inner {
+	color: red;
+}
+
+
+.outer .sibling {
+	color: green;
+}
