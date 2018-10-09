@@ -7,7 +7,6 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 
 
-
 /**
  * splitChunks plugin config -- separate your build into hash-able chunks for loading/caching
  *
@@ -48,8 +47,7 @@ const optimization = {
 
 // Plugin stack
 // @see https://webpack.js.org/guides/development/#choosing-a-development-tool
-const plugins = [
-	// Required for build
+const buildPlugins = [
 	new HtmlWebpackPlugin({
 		title: 'Development',
 	}),
@@ -59,15 +57,11 @@ const plugins = [
 		filename: "[name].css",
 		chunkFilename: "[id].css"
 	}),
-
-
-	// Dev
-	new webpack.HotModuleReplacementPlugin(),
-
-	// Compile/prod
+];
+const devPlugins = [
 	new webpack.HotModuleReplacementPlugin(),
 ];
-
+const prodPlugins = [];
 
 /**
  * entry points: src/index
@@ -75,11 +69,18 @@ const plugins = [
  * @param {
  * @returns {env => webpack config}
  */
-module.exports = (env = {}) => {
-	// configure plugins/etc for env.prod
-	console.log(env);
-
-	const mode = env.production ? 'production' : 'development';
+module.exports = ({
+	production = false,
+} = {}) => {
+	// configure plugins/etc
+	const mode = production ? 'production' : 'development';
+	const plugins = [
+		...buildPlugins,
+		...(production ? prodPlugins : devPlugins),
+	];
+	const devtool = production
+		? 'none'
+		: 'cheap-module-eval-source-map';
 
 	return {
 		mode,
@@ -94,7 +95,7 @@ module.exports = (env = {}) => {
 					test: /\.css$/,
 					use: [
 						// @todo: clean up prod
-						env.production ? { loader: MiniCssExtractPlugin.loader } : 'style-loader',
+						production ? { loader: MiniCssExtractPlugin.loader } : 'style-loader',
 						'css-loader'
 					],
 				},
@@ -117,7 +118,7 @@ module.exports = (env = {}) => {
 		},
 
 		// Development settings
-		devtool: 'cheap-module-eval-source-map',
+		devtool,
 		devServer: {
 			contentBase: './src',
 			hot: true,
