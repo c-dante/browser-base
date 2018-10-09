@@ -10,7 +10,8 @@
 	],
 	"plugins": [
 		"@babel/plugin-syntax-object-rest-spread",
-		"@babel/plugin-proposal-class-properties"
+		"@babel/plugin-proposal-class-properties",
+		"lodash"
 	],
 }
 

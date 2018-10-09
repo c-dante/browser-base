@@ -1,0 +1,2 @@
+<%= JSON.stringify(webpack.assetsByChunkName) %>
+

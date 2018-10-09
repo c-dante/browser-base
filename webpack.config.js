@@ -2,21 +2,20 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const webpack = require('webpack');
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin')
 
 
 /**
  * splitChunks plugin config -- separate your build into hash-able chunks for loading/caching
  *
  * @see https://webpack.js.org/plugins/split-chunks-plugin/
- * @param {
- * @returns {undefined}
  */
 const splitChunks = {
 	chunks: 'async',
-	minSize: 30000,
+	minSize: 100,
 	maxSize: 0,
 	minChunks: 1,
 	maxAsyncRequests: 5,
@@ -26,6 +25,7 @@ const splitChunks = {
 	cacheGroups: {
 		vendors: {
 			test: /[\\/]node_modules[\\/]/,
+			chunks: 'all',
 			priority: -10,
 		},
 		default: {
@@ -37,8 +37,7 @@ const splitChunks = {
 };
 
 // @see https://webpack.js.org/configuration/optimization/
-const optimization = {
-	splitChunks,
+const prodOptimization = {
 	minimizer: [
 		new UglifyJsPlugin(),
 		new OptimizeCSSAssetsPlugin({}),
@@ -48,20 +47,45 @@ const optimization = {
 // Plugin stack
 // @see https://webpack.js.org/guides/development/#choosing-a-development-tool
 const buildPlugins = [
+	// Generate a manifest
 	new HtmlWebpackPlugin({
-		title: 'Development',
+		filename: 'webpack-common-manifest.json',
+		template: './manifest.tpl',
+		inject: false,
+	}),
+	// Build the app
+	new HtmlWebpackPlugin({
+		title: 'Development Title',
+		chunksSortMode: 'dependency',
+		excludeChunks: [],
+	}),
+	new ScriptExtHtmlWebpackPlugin({
+		sync: [
+			/vendors.*\.js/,
+		],
+		defaultAttribute: 'async',
 	}),
 	new MiniCssExtractPlugin({
 		// Options similar to the same options in webpackOptions.output
 		// both options are optional
-		filename: "[name].css",
-		chunkFilename: "[id].css"
+		filename: '[name].css',
+		chunkFilename: '[id].css'
 	}),
 ];
+
 const devPlugins = [
+	new webpack.SourceMapDevToolPlugin({
+		columns: false,
+		filename: '[file].map[query]',
+		lineToLine: false,
+		module: false,
+	}),
 	new webpack.HotModuleReplacementPlugin(),
 ];
-const prodPlugins = [];
+
+const prodPlugins = [
+	new CleanWebpackPlugin(['dist']),
+];
 
 /**
  * entry points: src/index
@@ -74,17 +98,21 @@ module.exports = ({
 } = {}) => {
 	// configure plugins/etc
 	const mode = production ? 'production' : 'development';
+
 	const plugins = [
 		...buildPlugins,
 		...(production ? prodPlugins : devPlugins),
 	];
-	const devtool = production
-		? 'none'
-		: 'cheap-module-eval-source-map';
+
+	const optimization = {
+		splitChunks,
+		...(production ? prodOptimization : {}),
+	};
 
 	return {
 		mode,
 		plugins,
+		optimization,
 		entry: {
 			index: './src/index.js',
 		},
@@ -113,12 +141,10 @@ module.exports = ({
 			],
 		},
 		output: {
-			filename: '[name].bundle.js',
+			filename: production ? '[name].[contenthash].bundle.js' : '[name].bundle.js',
 			path: path.resolve(__dirname, 'dist'),
 		},
-
 		// Development settings
-		devtool,
 		devServer: {
 			contentBase: './src',
 			hot: true,
