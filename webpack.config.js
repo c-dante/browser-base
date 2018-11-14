@@ -126,7 +126,7 @@ module.exports = ({
 			rules: [
 				// templates
 				{
-					test: /\.tpl\.pug$/,
+					test: /\.pug$/,
 					use: [
 						'pug-loader'
 					],
