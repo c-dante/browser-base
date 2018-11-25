@@ -1,3 +1,7 @@
 .imported {
 	font-size: 2em;
+
+	.nested-import {
+		color: purple;
+	}
 }
