@@ -1,0 +1,16 @@
+/*	 Import: https://github.com/postcss/postcss-import */
+@import "./import.css";
+
+/* Nesting: https://github.com/postcss/postcss-nested */
+.outer {
+	color: blue;
+
+	.inner {
+		color: red;
+	}
+
+	.sibling {
+		color: green;
+	}
+}
+

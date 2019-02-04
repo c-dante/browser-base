@@ -1,115 +1,188 @@
 const path = require('path');
-const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
-const StyleExtHtmlWebpackPlugin = require('style-ext-html-webpack-plugin');
-const WebpackChunkHash = require('webpack-chunk-hash');
-const ChunkManifestPlugin = require('chunk-manifest-webpack-plugin');
-const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin');
-const InlineChunkManifestHtmlWebpackPlugin = require('inline-chunk-manifest-html-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const webpack = require('webpack');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin')
 
-const entrypoints = {
-	app: ['./app.js'],
+
+/**
+ * splitChunks plugin config -- separate your build into hash-able chunks for loading/caching
+ *
+ * @see https://webpack.js.org/plugins/split-chunks-plugin/
+ */
+const splitChunks = {
+	chunks: 'async',
+	minSize: 100,
+	maxSize: 0,
+	minChunks: 1,
+	maxAsyncRequests: 5,
+	maxInitialRequests: 3,
+	automaticNameDelimiter: '~',
+	name: true,
+	cacheGroups: {
+		vendors: {
+			test: /[\\/]node_modules[\\/]/,
+			chunks: 'all',
+			priority: -10,
+		},
+		styles: {
+			name: 'styles',
+			test: /\.css$/,
+			chunks: 'all',
+			enforce: true
+		},
+		default: {
+			minChunks: 2,
+			priority: -20,
+			reuseExistingChunk: true,
+		},
+	},
 };
 
-// @todo: pluck from env vars
-const debugEnabled = true;
-const isProd = false;
+// @see https://webpack.js.org/configuration/optimization/
+const prodOptimization = {
+	minimizer: [
+		new UglifyJsPlugin(),
+		new OptimizeCSSAssetsPlugin({}),
+	],
+};
 
-const plugins = [
-	new webpack.optimize.CommonsChunkPlugin({
-		name: 'vendor',
-		minChunks: function(module){
-			if (module.resource && (/^.*\.(css|scss)$/).test(module.resource)) {
-				return false;
-			}
-			return module.context && module.context.indexOf('node_modules') !== -1;
+// Plugin stack
+// @see https://webpack.js.org/guides/development/#choosing-a-development-tool
+const buildPlugins = [
+	// Generate a manifest
+	new HtmlWebpackPlugin({
+		filename: 'webpack-common-manifest.json',
+		template: './manifest.tpl',
+		inject: false,
+	}),
+
+	// Build the app
+	new HtmlWebpackPlugin({
+		title: 'Development Title',
+		chunksSortMode: 'dependency',
+		excludeChunks: [],
+		meta: {
+			'viewport': 'width=device-width, initial-scale=1',
+			'mobile-web-app-capable': 'yes',
 		},
 	}),
-	new webpack.optimize.CommonsChunkPlugin({
-		name: 'manifest',
-		minChunks: Infinity,
-	}),
-	new webpack.HashedModuleIdsPlugin(),
-	new WebpackChunkHash(),
-
-	// https://github.com/jantimon/html-webpack-plugin
-	new HtmlWebpackPlugin({
-		chunksSortMode: 'dependency',
-		chunks: ['manifest', 'vendor', 'app'],
-		template: 'index.pug'
-	}),
-	new InlineChunkManifestHtmlWebpackPlugin(),
-
-	//
-	// https://github.com/numical/script-ext-html-webpack-plugin
 	new ScriptExtHtmlWebpackPlugin({
 		sync: [
-			/manifest\..*\.js/,
-			/vendor\..*\.js/,
-			/app\..*\.js/,
+			/vendors.*\.js/,
 		],
 		defaultAttribute: 'async',
 	}),
+];
 
-	new HtmlWebpackHarddiskPlugin({
-		outputPath: path.resolve(__dirname, 'views'),
-	}),
-	new webpack.LoaderOptionsPlugin({
-		debug: debugEnabled,
-	}),
-
-	// @todo: these are for dev -- for prod builds, do your own thing
+const devPlugins = [
 	new webpack.SourceMapDevToolPlugin({
-		// exclude the index entry point
-		exclude: /.*index.*$/,
 		columns: false,
 		filename: '[file].map[query]',
 		lineToLine: false,
-		module: false
+		module: false,
+	}),
+	new webpack.HotModuleReplacementPlugin(),
+];
+
+const prodPlugins = [
+	new CleanWebpackPlugin(['dist']),
+
+	// @see https://webpack.js.org/plugins/mini-css-extract-plugin/
+	new MiniCssExtractPlugin({
+		filename: '[name].[contenthash].css',
 	}),
 ];
 
-module.exports = {
-	module:	{
-		rules: [
-			{
-				include: /(src|test).*\.js$/,
-				loaders: [ 'babel-loader' ],
+/**
+ * entry points: src/index
+ *
+ * @param {
+ * @returns {env => webpack config}
+ */
+module.exports = ({
+	production = false,
+} = {}) => {
+	// configure plugins/etc
+	const mode = production ? 'production' : 'development';
+
+	const plugins = [
+		...(production ? prodPlugins : devPlugins),
+		...buildPlugins,
+	];
+
+	const optimization = {
+		splitChunks,
+		...(production ? prodOptimization : {}),
+	};
+
+	return {
+		mode,
+		plugins,
+		optimization,
+		entry: {
+			index: './src/index.js',
+		},
+		module: {
+			rules: [
+				// templates
+				{
+					test: /\.pug$/,
+					use: [
+						'pug-loader'
+					],
+				},
+				// styles
+				{
+					test: /\.css$/,
+					use: [
+						production ? MiniCssExtractPlugin.loader : 'style-loader',
+						{ loader: 'css-loader', options: { importLoaders: 1 } },
+						'postcss-loader',
+					],
+				},
+//				{
+//					test: /\.scss$/,
+//					use: [
+//						production ? MiniCssExtractPlugin.loader : 'style-loader',
+//						'css-loader',
+//						'sass-loader',
+//					],
+//				},
+				// js / babel
+				{
+					test: /\.m?js$/,
+					exclude: /(node_modules)/,
+					use: {
+						loader: 'babel-loader',
+						options: {
+							presets: ['@babel/preset-env'],
+						},
+					},
+				},
+			],
+		},
+		output: {
+			filename: production ? '[name].[contenthash].bundle.js' : '[name].bundle.js',
+			path: path.resolve(__dirname, 'dist'),
+		},
+		// Development settings
+		devServer: {
+			contentBase: './src',
+			hot: true,
+			// This is configured to allow client side cors request to some other server
+			// @see: https://webpack.js.org/configuration/dev-server/#devserver-proxy
+			proxy: {
+				'/api': {
+					changeOrigin: true,
+					target: 'https://api.example.com/',
+					pathRewrite: {'^/api' : ''},
+					secure: false,
+				},
 			},
-			{
-				test: path.resolve(process.cwd(), 'src/app.scss'),
-				loaders: [
-					'style-loader',
-					'css-loader',
-					'postcss-loader',
-					'sass-loader',
-				]
-			},
-			{
-				include: /\.tpl\.(pug)$/,
-				loaders: [
-					'html-loader?removeRedundantAttributes=false',
-					'pug-html-loader'
-				],
-			},
-			{
-				include: /[^\.][^t][^p][^l]\.pug$/,
-				loaders: [
-					'pug-loader?exports=false',
-				],
-			},
-			{
-				include: /\.json$/,
-				loaders: ['json-loader'],
-			},
-		]
-	},
-	plugins: plugins,
-	entry: entrypoints,
-	output: {
-		filename: isProd ? '[name].[hash].bundle.js' : '[name].bundle.js',
-		path: path.resolve(process.cwd(), 'bin'),
-	},
-	context: path.resolve(process.cwd(), 'src'),
+		},
+	};
 };

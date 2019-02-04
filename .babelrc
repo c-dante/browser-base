@@ -1,20 +1,16 @@
 {
-  "presets": [
-    ["env", {
-      "targets": {
-        "browsers": ["last 2 versions"]
-      }
-    }],
-    ["es2015", {
-      "modules": false
-    }]
-  ],
-  "plugins": [
-    ["transform-object-rest-spread"]
-  ],
-  "env": {
-    "test": {
-      "presets": ["es2015"]
-    }
-  }
+	"presets": [
+		[
+			"@babel/preset-env",
+			{
+				"modules": false,
+				"useBuiltIns": "usage",
+			}
+		]
+	],
+	"plugins": [
+		"@babel/plugin-syntax-object-rest-spread",
+		"@babel/plugin-proposal-class-properties",
+		"lodash"
+	],
 }

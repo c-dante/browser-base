@@ -1,49 +1,55 @@
 {
   "name": "browser-base",
-  "version": "1.0.0",
-  "repository": "c-dante/browser-base",
+  "version": "0.1.0",
+  "description": "Intermediate. Use c-dante/web",
+  "main": "none",
   "scripts": {
-    "build": "rm -rf ./bin && ./node_modules/webpack/bin/webpack.js",
-    "aws-deploy": "aws s3 sync --acl public-read --delete ./bin",
-    "linter": "./node_modules/eslint/bin/eslint.js --fix src/ test/",
-    "start": "./node_modules/webpack-dev-server/bin/webpack-dev-server.js --hot --inline --progress",
-    "test": "echo \"UNIMPLEMENTED\" && exit 0",
-    "precommit": "npm run linter"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --env.production",
+    "start": "webpack-dev-server"
   },
-  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/c-dante/web.git"
+  },
+  "author": "Dante <c.dante.federici@gmail.com> (http://dante.codes/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/c-dante/web/issues"
+  },
+  "homepage": "https://github.com/c-dante/web#readme",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "dependencies": {
+    "lodash": "^4.17.11"
+  },
   "devDependencies": {
-    "autoprefixer": "^7.1.4",
-    "babel-core": "^6.26.0",
-    "babel-eslint": "^7.2.3",
-    "babel-loader": "^7.1.2",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-preset-env": "^1.6.0",
-    "babel-preset-es2015-webpack": "^6.4.3",
-    "chunk-manifest-webpack-plugin": "^1.1.2",
-    "css-loader": "^0.28.7",
-    "eslint": "^4.6.1",
-    "eslint-import-resolver-webpack": "^0.8.3",
-    "eslint-plugin-import": "^2.7.0",
-    "html-loader": "^0.5.1",
-    "html-webpack-harddisk-plugin": "^0.1.0",
-    "html-webpack-plugin": "^2.30.1",
-    "husky": "^0.14.3",
-    "inline-chunk-manifest-html-webpack-plugin": "^1.1.1",
-    "json-loader": "^0.5.7",
-    "node-sass": "^4.5.3",
-    "postcss-loader": "^2.0.6",
-    "pug": "^2.0.0-rc.4",
-    "pug-html-loader": "^1.1.5",
-    "pug-loader": "^2.3.0",
-    "sass-loader": "^6.0.6",
-    "script-ext-html-webpack-plugin": "^1.8.5",
-    "style-ext-html-webpack-plugin": "^3.4.1",
-    "style-loader": "^0.18.2",
-    "webpack": "^3.5.6",
-    "webpack-chunk-hash": "^0.4.0",
-    "webpack-dev-server": "^2.7.1"
-  },
-  "engines": {
-    "node": ">=5.0.0"
+    "@babel/core": "^7.1.2",
+    "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/plugin-syntax-object-rest-spread": "^7.0.0",
+    "@babel/polyfill": "^7.0.0",
+    "@babel/preset-env": "^7.1.0",
+    "babel-loader": "^8.0.4",
+    "babel-plugin-lodash": "^3.3.4",
+    "browserslist": "^4.3.4",
+    "clean-webpack-plugin": "^0.1.19",
+    "css-loader": "^1.0.0",
+    "html-webpack-plugin": "^3.2.0",
+    "mini-css-extract-plugin": "^0.4.3",
+    "optimize-css-assets-webpack-plugin": "^5.0.1",
+    "postcss": "^7.0.5",
+    "postcss-import": "^12.0.0",
+    "postcss-loader": "^3.0.0",
+    "postcss-nested": "^4.1.0",
+    "postcss-preset-env": "^6.3.1",
+    "pug": "^2.0.3",
+    "pug-loader": "^2.4.0",
+    "script-ext-html-webpack-plugin": "^2.0.1",
+    "style-loader": "^0.23.0",
+    "uglifyjs-webpack-plugin": "^2.0.1",
+    "webpack": "^4.20.2",
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.11"
   }
 }

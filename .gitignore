@@ -1,5 +1,5 @@
 # Build Artifacts
-bin
+dist
 
 # Dependencies
 node_modules
